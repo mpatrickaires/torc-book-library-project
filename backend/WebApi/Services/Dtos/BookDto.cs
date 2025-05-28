@@ -6,9 +6,7 @@ public class BookDto
 {
     public string Title { get; set; }
 
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
+    public string Author { get; set; }
 
     public int TotalCopies { get; set; }
 
@@ -23,8 +21,7 @@ public class BookDto
     public BookDto(Book book)
     {
         Title = book.Title;
-        FirstName = book.FirstName;
-        LastName = book.LastName;
+        Author = $"{book.FirstName} {book.LastName}";
         TotalCopies = book.TotalCopies;
         CopiesInUse = book.CopiesInUse;
         Type = book.Type;
