@@ -1,8 +1,9 @@
 ﻿using WebApi.Domain;
+using WebApi.Services.Dtos;
 
 namespace WebApi.Infra.Repositories.Interfaces;
 
 public interface IBookRepository
 {
-    public Task<List<Book>> GetBooksAsync();
+    public Task<List<Book>> GetBooksAsync(BookFilterDto? filter = null);
 }

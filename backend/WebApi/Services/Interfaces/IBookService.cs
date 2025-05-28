@@ -4,5 +4,5 @@ namespace WebApi.Services.Interfaces;
 
 public interface IBookService
 {
-    public Task<List<BookDto>> GetBooksAsync();
+    public Task<List<BookDto>> GetBooksAsync(BookFilterDto? filter = null);
 }

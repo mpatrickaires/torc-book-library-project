@@ -15,8 +15,8 @@ public class BookController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<BookDto>>> GetBooksAsync()
+    public async Task<ActionResult<List<BookDto>>> GetBooksAsync([FromQuery] BookFilterDto? filter)
     {
-        return await _bookService.GetBooksAsync();
+        return await _bookService.GetBooksAsync(filter);
     }
 }
