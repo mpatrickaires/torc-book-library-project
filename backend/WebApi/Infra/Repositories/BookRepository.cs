@@ -50,6 +50,11 @@ public class BookRepository : IBookRepository
         return booksQuery.ToListAsync();
     }
 
+    public Task<List<string>> GetBookTypesAsync()
+    {
+        return _books.Where(b => b.Type != null).Select(b => b.Type).Distinct().OfType<string>().ToListAsync();
+    }
+
     private string ToPatternMatching(string text)
     {
         return $"%{text}%";

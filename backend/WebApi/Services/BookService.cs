@@ -18,4 +18,9 @@ public class BookService : IBookService
         var books = await _bookRepository.GetBooksAsync(filter);
         return books.Select(book => new BookDto(book)).ToList();
     }
+
+    public Task<List<string>> GetBookTypesAsync()
+    {
+        return _bookRepository.GetBookTypesAsync();
+    }
 }
