@@ -25,4 +25,10 @@ public class BookController : ControllerBase
     {
         return await _bookService.GetBookTypesAsync();
     }
+
+    [HttpGet("categories")]
+    public async Task<ActionResult<List<string>>> GetBookCategoriesAsync()
+    {
+        return await _bookService.GetBookCategoriesAsync();
+    }
 }

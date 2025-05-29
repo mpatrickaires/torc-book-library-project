@@ -55,6 +55,11 @@ public class BookRepository : IBookRepository
         return _books.Where(b => b.Type != null).Select(b => b.Type).Distinct().OfType<string>().ToListAsync();
     }
 
+    public Task<List<string>> GetBookCategoriesAsync()
+    {
+        return _books.Where(b => b.Category != null).Select(b => b.Category).Distinct().OfType<string>().ToListAsync();
+    }
+
     private string ToPatternMatching(string text)
     {
         return $"%{text}%";

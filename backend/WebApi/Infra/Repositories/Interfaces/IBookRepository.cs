@@ -7,4 +7,5 @@ public interface IBookRepository
 {
     public Task<List<Book>> GetBooksAsync(BookFilterDto? filter = null);
     public Task<List<string>> GetBookTypesAsync();
+    public Task<List<string>> GetBookCategoriesAsync();
 }

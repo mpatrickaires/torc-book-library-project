@@ -23,4 +23,9 @@ public class BookService : IBookService
     {
         return _bookRepository.GetBookTypesAsync();
     }
+
+    public Task<List<string>> GetBookCategoriesAsync()
+    {
+        return _bookRepository.GetBookCategoriesAsync();
+    }
 }
