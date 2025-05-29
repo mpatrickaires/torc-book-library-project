@@ -18,13 +18,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
-import { useFetcher } from './hooks/useFetchBooks';
+import { useEffect, useState } from 'react';
+import { useFetcher } from './hooks/useFetcher';
 import type { Book, BookFilter } from './types/Book';
 
 function App() {
-  const [searchBy, setSearchBy] = useState<keyof BookFilter | ''>('');
-  const [searchValue, setSearchValue] = useState<string>('');
+  const { searchBy, searchValue, setSearchBy, setSearchValue } = useSearch();
 
   const fetcherBooks = useFetcher<Book[]>('/books');
   const fetcherBookTypes = useFetcher<string[]>('/books/types');
@@ -36,10 +35,11 @@ function App() {
     fetcherBookCategories.load();
   }, []);
 
-  const searchValueInput = useMemo(() => {
+  function getSearchValueInput() {
     if (searchBy !== 'type' && searchBy !== 'category') {
       return (
         <TextField
+          value={searchValue}
           onChange={e => setSearchValue(e.target.value)}
           label="Search Value"
         />
@@ -52,6 +52,7 @@ function App() {
       <>
         <InputLabel>Search Value</InputLabel>
         <Select
+          value={searchValue}
           onChange={e => setSearchValue(e.target.value as string)}
           label="Search Value"
         >
@@ -61,7 +62,7 @@ function App() {
         </Select>
       </>
     );
-  }, [searchBy]);
+  }
 
   return (
     <Container>
@@ -84,6 +85,7 @@ function App() {
               <FormControl>
                 <InputLabel>Search By</InputLabel>
                 <Select
+                  value={searchBy}
                   onChange={e => {
                     const value = e.target.value;
                     if (isValidSearchByValue(value)) {
@@ -97,7 +99,7 @@ function App() {
                   ))}
                 </Select>
               </FormControl>
-              <FormControl>{searchValueInput}</FormControl>
+              <FormControl>{getSearchValueInput()}</FormControl>
               <Button
                 loading={fetcherBooks.isLoading}
                 type="submit"
@@ -147,6 +149,21 @@ function App() {
       </TableContainer>
     </Container>
   );
+}
+
+function useSearch() {
+  const [searchBy, setSearchBy] = useState<keyof BookFilter | ''>('');
+  const [searchValue, setSearchValue] = useState<string>('');
+
+  return {
+    searchBy,
+    searchValue,
+    setSearchValue,
+    setSearchBy: (value: typeof searchBy) => {
+      setSearchValue('');
+      setSearchBy(value);
+    },
+  };
 }
 
 const searchByOptions = [
