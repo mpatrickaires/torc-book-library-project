@@ -18,7 +18,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFetcher } from './hooks/useFetchBooks';
 import type { Book, BookFilter } from './types/Book';
 
@@ -28,11 +28,40 @@ function App() {
 
   const fetcherBooks = useFetcher<Book[]>('/books');
   const fetcherBookTypes = useFetcher<string[]>('/books/types');
+  const fetcherBookCategories = useFetcher<string[]>('/books/categories');
 
   useEffect(() => {
     fetcherBooks.load();
     fetcherBookTypes.load();
+    fetcherBookCategories.load();
   }, []);
+
+  const searchValueInput = useMemo(() => {
+    if (searchBy !== 'type' && searchBy !== 'category') {
+      return (
+        <TextField
+          onChange={e => setSearchValue(e.target.value)}
+          label="Search Value"
+        />
+      );
+    }
+
+    const fetcher =
+      searchBy === 'type' ? fetcherBookTypes : fetcherBookCategories;
+    return (
+      <>
+        <InputLabel>Search Value</InputLabel>
+        <Select
+          onChange={e => setSearchValue(e.target.value as string)}
+          label="Search Value"
+        >
+          {fetcher.data?.map(type => (
+            <MenuItem value={type}>{type}</MenuItem>
+          ))}
+        </Select>
+      </>
+    );
+  }, [searchBy]);
 
   return (
     <Container>
@@ -68,26 +97,7 @@ function App() {
                   ))}
                 </Select>
               </FormControl>
-              <FormControl>
-                {searchBy === 'type' ? (
-                  <>
-                    <InputLabel>Search Value</InputLabel>
-                    <Select
-                      onChange={e => setSearchValue(e.target.value as string)}
-                      label="Search Value"
-                    >
-                      {fetcherBookTypes.data?.map(type => (
-                        <MenuItem value={type}>{type}</MenuItem>
-                      ))}
-                    </Select>
-                  </>
-                ) : (
-                  <TextField
-                    onChange={e => setSearchValue(e.target.value)}
-                    label="Search Value"
-                  />
-                )}
-              </FormControl>
+              <FormControl>{searchValueInput}</FormControl>
               <Button
                 loading={fetcherBooks.isLoading}
                 type="submit"
