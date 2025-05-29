@@ -14,7 +14,7 @@ export function useFetcher<TData>(route: string) {
 
       const searchParams = params ? new URLSearchParams(params).toString() : '';
       const response = await fetch(
-        `https://localhost:7218${route}?${searchParams}`
+        `${import.meta.env.VITE_BACKEND_URL}${route}?${searchParams}`
       );
 
       const data = await response.json();

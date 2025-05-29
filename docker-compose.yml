@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Apply Entity Framework migrations
+  db-migration:
+    build:
+      context: ./backend/WebApi
+      dockerfile: migration.Dockerfile
+    command: '"${CONNECTION_STRING}"'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: ./backend/WebApi
+    environment:
+      ConnectionStrings__TorcBookLibraryDb: ${CONNECTION_STRING}
+    ports:
+      - '3001:80'
+    depends_on:
+      db-migration:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_BACKEND_URL: http://localhost:3001
+    ports:
+      - '3000:80'

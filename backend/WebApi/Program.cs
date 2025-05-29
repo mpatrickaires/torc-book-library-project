@@ -16,11 +16,7 @@ builder.Services.AddDbContext<LibraryDbContext>(options => options
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5173");
-        });
+    options.AddDefaultPolicy(policy => policy.AllowAnyOrigin());
 });
 
 builder.Services.AddControllers();
