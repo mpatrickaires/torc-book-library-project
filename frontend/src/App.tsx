@@ -19,17 +19,19 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useFetchBooks } from './hooks/useFetchBooks';
-import type { BookFilter } from './types/Book';
+import { useFetcher } from './hooks/useFetchBooks';
+import type { Book, BookFilter } from './types/Book';
 
 function App() {
   const [searchBy, setSearchBy] = useState<keyof BookFilter | ''>('');
   const [searchValue, setSearchValue] = useState<string>('');
 
-  const { books, isLoading, fetchBooks } = useFetchBooks();
+  const fetcherBooks = useFetcher<Book[]>('/books');
+  const fetcherBookTypes = useFetcher<string[]>('/books/types');
 
   useEffect(() => {
-    fetchBooks();
+    fetcherBooks.load();
+    fetcherBookTypes.load();
   }, []);
 
   return (
@@ -46,7 +48,7 @@ function App() {
                 searchBy && searchValue
                   ? ({ [searchBy]: searchValue } satisfies BookFilter)
                   : undefined;
-              fetchBooks(filter);
+              fetcherBooks.load(filter);
             }}
           >
             <Box maxWidth={1 / 2} display="flex" flexDirection="column" gap={4}>
@@ -67,13 +69,27 @@ function App() {
                 </Select>
               </FormControl>
               <FormControl>
-                <TextField
-                  onChange={e => setSearchValue(e.target.value)}
-                  label="Search Value"
-                />
+                {searchBy === 'type' ? (
+                  <>
+                    <InputLabel>Search Value</InputLabel>
+                    <Select
+                      onChange={e => setSearchValue(e.target.value as string)}
+                      label="Search Value"
+                    >
+                      {fetcherBookTypes.data?.map(type => (
+                        <MenuItem value={type}>{type}</MenuItem>
+                      ))}
+                    </Select>
+                  </>
+                ) : (
+                  <TextField
+                    onChange={e => setSearchValue(e.target.value)}
+                    label="Search Value"
+                  />
+                )}
               </FormControl>
               <Button
-                loading={isLoading}
+                loading={fetcherBooks.isLoading}
                 type="submit"
                 variant="contained"
                 sx={{ maxWidth: 1 / 2 }}
@@ -96,7 +112,7 @@ function App() {
             <TableCell>Available Copies</TableCell>
           </TableHead>
           <TableBody>
-            {books.map(
+            {fetcherBooks.data?.map(
               ({
                 title,
                 author,
