@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import type { Book, BookFilter } from '../types/Book';
 import { useSnackbar } from './useSnackbar';
 
 export function useFetcher<TData>(route: string) {
